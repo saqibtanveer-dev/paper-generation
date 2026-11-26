@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { QUESTION_TYPES } from "../lib/globalContants";
 
 export interface MCQQuestionContextType {
@@ -21,13 +21,5 @@ export interface QuestionsContextType {
 
 
 const QuestionContext = createContext<QuestionsContextType | null>(null);
-
-export const useQuestionsContext = () => {
-    const context = useContext(QuestionContext);
-    if (!context) {
-        throw new Error("useQuestionsContext must be used within a QuestionsProvider");
-    }
-    return context;
-}
 
 export default QuestionContext;

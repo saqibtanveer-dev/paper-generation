@@ -53,6 +53,8 @@ export const McqQuestion = ({q, idx}: {q: MCQQuestionContextType, idx: number}) 
           borders: {
             top: { style: BorderStyle.NONE, size: 0, color: "auto" },
             bottom: { style: BorderStyle.NONE, size: 0, color: "auto" },
+            left: { style: BorderStyle.NONE, size: 0, color: "auto" },
+            right: { style: BorderStyle.NONE, size: 0, color: "auto" },
           },
           rows: [
             new TableRow({
@@ -64,7 +66,7 @@ export const McqQuestion = ({q, idx}: {q: MCQQuestionContextType, idx: number}) 
                   },
                   children: [
                     new Paragraph({
-                      text: `${String.fromCharCode(65 + optionIdx)}. ${option}`,
+                      text: `${String.fromCharCode(9424 + optionIdx)}. ${option}`,
                     }),
                   ],
                 });
