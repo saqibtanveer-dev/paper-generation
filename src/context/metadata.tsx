@@ -1,7 +1,9 @@
 import React, { createContext } from "react";
 
 export interface MetaData {
-  title: string
+  title?: string
+  time?: string
+  marks?: string
 }
 
 export interface MetaDataContext {

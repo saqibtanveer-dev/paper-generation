@@ -8,7 +8,7 @@ function MetaDataForm() {
 
   return (
     <form
-      className="mx-auto w-full max-w-2xl space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8"
+      className="mt-22 mx-auto w-full max-w-2xl space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8"
       action=""
     >
       <div className="space-y-2">
@@ -16,7 +16,7 @@ function MetaDataForm() {
           className="block text-sm font-semibold text-slate-700"
           htmlFor="docTitle"
         >
-          Document title
+          Paper title
         </label>
         <input
           value={metaData?.title ?? ""}
@@ -31,12 +31,48 @@ function MetaDataForm() {
           placeholder="Enter a title for your question paper"
         />
       </div>
-      <button
-        className="rounded-lg bg-indigo-600 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200"
-        type="submit"
-      >
-        Save details
-      </button>
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-6">
+          <label
+          className="block text-sm font-semibold text-slate-700"
+          htmlFor="paperTime"
+        >
+          Paper Time
+        </label>
+        <input
+          value={metaData?.time ?? ""}
+          onChange={(e) => {
+            const time = e.currentTarget.value;
+            setMetaData((prev) => ({ ...prev, time }));
+          }}
+          className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+          type="text"
+          name="paperTime"
+          id="paperTime"
+          placeholder="Enter time for your question paper"
+        />
+        </div>
+        <div className="col-span-6">
+          <label
+          className="block text-sm font-semibold text-slate-700"
+          htmlFor="paperMarks"
+        >
+          Paper Marks
+        </label>
+        <input
+          value={metaData?.marks ?? ""}
+          onChange={(e) => {
+            const marks = e.currentTarget.value;
+            setMetaData((prev) => ({ ...prev, marks }));
+          }}
+          className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+          type="text"
+          name="paperMarks"
+          id="paperMarks"
+          placeholder="Enter marks for your question paper"
+        />
+        </div>
+      </div>
     </form>
   );
 }
@@ -161,7 +197,8 @@ function QuestionsForm() {
             idx === editingIndex ? updatedQuestion : existingQuestion,
           ),
     );
-    setQuestion({ statement: "", options: [] });
+    setQuestion({ statement: "", options: ["", "", "", ""] });
+    setEditingIndex(null)
   }
 
   function onEdit(idx: number) {

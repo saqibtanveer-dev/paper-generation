@@ -12,6 +12,7 @@ import {
   WidthType,
   BorderStyle,
   TextRun,
+  Header,
 } from "docx";
 import { renderAsync } from "docx-preview";
 import { LongQuestion, McqQuestion, ShortQuestion } from "./doc-components";
@@ -19,9 +20,14 @@ import { QUESTION_TYPES } from "../lib/globalContants";
 import { useMetaDataContext } from "../context/use-metadata-context";
 import { saveAs } from "file-saver";
 import { FaDownload } from "react-icons/fa";
+import { TextWatermark } from "docx/watermarks";
 
 const RenderMyDoc = () => {
-  const { questions } = useQuestionsContext();
+  let { questions } = useQuestionsContext();
+  const mcqs = questions.filter((q) => q.type === QUESTION_TYPES.mcqsQuestion);
+  const short = questions.filter((q) => q.type === QUESTION_TYPES.shortQuestion);
+  const long = questions.filter((q) => q.type === QUESTION_TYPES.longQuestion);
+  questions = [...short ,...mcqs]
   const { metaData } = useMetaDataContext();
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -46,51 +52,53 @@ const RenderMyDoc = () => {
           heading: HeadingLevel.HEADING_1,
           alignment: "center",
         }),
-        // new Table({
-        //   width: {
-        //     size: 100,
-        //     type: WidthType.PERCENTAGE,
-        //   },
-        //   alignment: "left",
-        //   borders: {
-        //     top: { style: BorderStyle.NONE, size: 0, color: "auto" },
-        //     bottom: { style: BorderStyle.NONE, size: 0, color: "auto" },
-        //     left: { style: BorderStyle.NONE, size: 0, color: "auto" },
-        //     right: { style: BorderStyle.NONE, size: 0, color: "auto" },
-        //     insideHorizontal: {
-        //       style: BorderStyle.NONE,
-        //       size: 0,
-        //       color: "auto",
-        //     },
-        //     insideVertical: {
-        //       style: BorderStyle.NONE,
-        //       size: 0,
-        //       color: "auto",
-        //     },
-        //   },
-        //   rows: [
-        //     new TableRow({
-        //       children: [
-        //         new TableCell({
-        //           children: [
-        //             new Paragraph({
-        //               alignment: "left",
-        //               text: "Name: _________________",
-        //             }),
-        //           ],
-        //         }),
-        //         new TableCell({
-        //           children: [
-        //             new Paragraph({
-        //               alignment: "right",
-        //               text: "Date: _________",
-        //             }),
-        //           ],
-        //         }),
-        //       ],
-        //     }),
-        //   ],
-        // }),
+        new Paragraph({ spacing: { after: 200 } }),
+        new Table({
+          width: {
+            size: 100,
+            type: WidthType.PERCENTAGE,
+          },
+          alignment: "left",
+
+          borders: {
+            top: { style: BorderStyle.NONE, size: 0, color: "auto" },
+            bottom: { style: BorderStyle.NONE, size: 0, color: "auto" },
+            left: { style: BorderStyle.NONE, size: 0, color: "auto" },
+            right: { style: BorderStyle.NONE, size: 0, color: "auto" },
+            insideHorizontal: {
+              style: BorderStyle.NONE,
+              size: 0,
+              color: "auto",
+            },
+            insideVertical: {
+              style: BorderStyle.NONE,
+              size: 0,
+              color: "auto",
+            },
+          },
+          rows: [
+            new TableRow({
+              children: [
+                new TableCell({
+                  children: [
+                    new Paragraph({
+                      alignment: "left",
+                      text: metaData?.time ? `Time: ${metaData.time}` : "",
+                    }),
+                  ],
+                }),
+                new TableCell({
+                  children: [
+                    new Paragraph({
+                      alignment: "right",
+                      text: metaData?.marks ? `Marks: ${metaData.marks}` : "",
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
       ];
 
       questions.forEach((q: QuestionContextType, idx) => {
@@ -131,6 +139,24 @@ const RenderMyDoc = () => {
                 },
               },
             },
+            headers: {
+              default: new Header({
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextWatermark({
+                        text: "FAITH HORIZON",
+                        font: "Arial",
+                        color: "D9D9D9",
+                        opacity: 0.25,
+                        bold: true,
+                        layout: "diagonal",
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            },
             children: docChildren,
           },
         ],
@@ -147,6 +173,18 @@ const RenderMyDoc = () => {
           inWrapper: true,
           breakPages: true,
         });
+
+        const watermarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" transform="rotate(-45 397 561.5)" fill="#D9D9D9" fill-opacity="0.6" font-family="Arial,sans-serif" font-size="68" font-weight="700">FAITH HORIZON</text></svg>`;
+        const watermarkBackground = `url("data:image/svg+xml,${encodeURIComponent(watermarkSvg)}")`;
+
+        previewRef.current
+          .querySelectorAll<HTMLElement>("section.docx-preview")
+          .forEach((page) => {
+            page.style.backgroundImage = watermarkBackground;
+            page.style.backgroundPosition = "center";
+            page.style.backgroundRepeat = "no-repeat";
+            page.style.backgroundSize = "100% 100%";
+          });
       }
     }
 
